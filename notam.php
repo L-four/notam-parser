@@ -32,17 +32,14 @@ enum NotamToken: int {
   case A = 20;
   case A_LOCATION = 21;
 
-  case YEAR = 22;
-  case MINUTE = 23;
-  case HOUR = 24;
-  case DAY = 25;
-  case MONTH = 26;
-
   case B = 27;
+  case B_DATE_TIME = 22;
 
   case C = 28;
   case C_PERMANENT = 29;
   case C_ESTIMATE = 30;
+
+  case C_DATE_TIME = 39;
 
   case D = 31;
   case D_SCHEDULE = 32;
@@ -64,24 +61,136 @@ $notams = explode('============================================', $contents);
 
 switch(php_sapi_name()) {
   case "cli":
-    foreach ($notams as $notam) {
-      $tokens = tokenize_notam($notam);
+    $start = microtime(TRUE);
+    foreach ($notams as $notam_string) {
+      $tokens = tokenize_notam($notam_string);
       foreach ($tokens as $token) {
-        print $token->type->name . ':' . substr($notam, $token->start,
+        print $token->type->name . ':' . substr($notam_string, $token->start,
             $token->end - $token->start) . "\n";
       }
+      $notam = object_from_tokens($tokens, $notam_string);
+      print_r($notam);
     }
+    print "" . microtime(TRUE) - $start;
     break;
   case "cli-server":
-    foreach ($notams as $notam) {
-      $tokens = tokenize_notam($notam);
-      print render_tokens_to_html($tokens, $notam);
+    foreach ($notams as $notam_string) {
+      $tokens = tokenize_notam($notam_string);
+      print render_tokens_to_html($tokens, $notam_string);
     }
     break;
 }
 
-print "\n\n";
-
+/**
+ * @param  \LFour\notam\TOKEN[]  $tokens
+ * @param  string  $notam_str
+ *
+ * @return \LFour\notam\NOTAM
+ */
+function object_from_tokens(array $tokens, string $notam_str): NOTAM {
+  $notam = notam_factory("20");
+  foreach ($tokens as $token) {
+    switch ($token->type) {
+      case NotamToken::IDENT_SERIES:
+        $notam->ident->series = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::IDENT_NUMBER:
+        $notam->ident->number = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::IDENT_YEAR:
+        $notam->ident->year = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::IDENT_TYPE:
+        $notam->ident->type = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::IDENT_REF_SERIES:
+        $notam->ident->ref_series = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::IDENT_REF_NUMBER:
+        $notam->ident->ref_number = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::IDENT_REF_YEAR:
+        $notam->ident->ref_year = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::WHITE_SPACE:
+        break;
+      case NotamToken::SLASH:
+        break;
+      case NotamToken::UNKNOWN:
+        break;
+      case NotamToken::Q:
+        break;
+      case NotamToken::Q_FIR:
+        $notam->Q->fir = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_NOTAM_CODE:
+        $notam->Q->notam_code = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_TRAFFIC:
+        $notam->Q->traffic = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_PURPOSE:
+        $notam->Q->purpose = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_SCOPE:
+        $notam->Q->scope = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_LOWER:
+        $notam->Q->lower = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_UPPER:
+        $notam->Q->upper = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_COORDINATES:
+        $notam->Q->coordinates = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::Q_RADIUS:
+        $notam->Q->radius = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::A:
+        break;
+      case NotamToken::A_LOCATION:
+        $notam->A->location = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::B:
+        break;
+      case NotamToken::C:
+        break;
+      case NotamToken::C_PERMANENT:
+        $notam->C->permanent = substr($notam_str, $token->start, $token->end - $token->start) === 'PERM';
+        break;
+      case NotamToken::C_ESTIMATE:
+        $notam->C->estimate = substr($notam_str, $token->start, $token->end - $token->start) === 'EST';
+        break;
+      case NotamToken::D:
+        break;
+      case NotamToken::D_SCHEDULE:
+        $notam->D->schedule = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::E:
+        break;
+      case NotamToken::E_TEXT:
+        $notam->E->body = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::F:
+        break;
+      case NotamToken::F_LEVEL:
+        $notam->F->feet = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::G:
+        break;
+      case NotamToken::G_LEVEL:
+        $notam->G->feet = substr($notam_str, $token->start, $token->end - $token->start);
+        break;
+      case NotamToken::B_DATE_TIME:
+        $notam->B->dateTime = parse_date($notam->century, substr($notam_str, $token->start, $token->end - $token->start));
+        break;
+      case NotamToken::C_DATE_TIME:
+        $notam->C->dateTime = parse_date($notam->century, substr($notam_str, $token->start, $token->end - $token->start));
+    }
+  }
+  return $notam;
+}
 
 /**
  * @param  string  $notam_str
@@ -92,8 +201,13 @@ function tokenize_notam(string $notam_str): array {
   $char = 0;
   /** @var TOKEN[] $tokens */
   $tokens = [];
+  $notam_len = strlen($notam_str);
 
   white_space($char, $notam_str, $tokens);
+
+  if ($char + 23 > $notam_len) {
+    return  $tokens;
+  }
 
   /**
    * F0610/22 NOTAMR F0607/22
@@ -152,7 +266,9 @@ function tokenize_notam(string $notam_str): array {
 
   while (TRUE) {
     white_space($char, $notam_str, $tokens);
-
+    if ($char + 1 > $notam_len) {
+      break;
+    }
     if ($notam_str[$char + 1] === ")") {
       if ($notam_str[$char] === 'Q') {
 
@@ -258,7 +374,8 @@ function tokenize_notam(string $notam_str): array {
 
         white_space($char, $notam_str, $tokens);
 
-        tokenize_date($char, $tokens);
+        $tokens[] = new TOKEN(NotamToken::B_DATE_TIME, $char, $char + 10);
+        $char = $char + 10;
 
         white_space($char, $notam_str, $tokens);
       }
@@ -280,7 +397,8 @@ function tokenize_notam(string $notam_str): array {
           $char = $char + 4;
         }
         else {
-          tokenize_date($char, $tokens);
+          $tokens[] = new TOKEN(NotamToken::C_DATE_TIME, $char, $char + 10);
+          $char = $char + 10;
 
           white_space($char, $notam_str, $tokens);
 
@@ -310,7 +428,7 @@ function tokenize_notam(string $notam_str): array {
         while ($notam_str[$char + 1] !== ')') {
           $char++;
         }
-        if ($notam_str[$char] === "\n") {
+        if ($notam_str[$char - 1] === "\n") {
           $char--;
         }
         $token->end = $char;
@@ -421,26 +539,6 @@ function tokenize_notam(string $notam_str): array {
 
   return $tokens;
 }
-/**
- * @param  int  $char
- * @param  array  $tokens
- */
-function tokenize_date(int &$char, array &$tokens) {
-  $tokens[] = new TOKEN(NotamToken::YEAR, $char, $char + 2);
-  $char = $char + 2;
-
-  $tokens[] = new TOKEN(NotamToken::MONTH, $char, $char + 2);
-  $char = $char + 2;
-
-  $tokens[] = new TOKEN(NotamToken::DAY, $char, $char + 2);
-  $char = $char + 2;
-
-  $tokens[] = new TOKEN(NotamToken::HOUR, $char, $char + 2);;
-  $char = $char + 2;
-
-  $tokens[] = new TOKEN(NotamToken::MINUTE, $char, $char + 2);
-  $char = $char + 2;
-}
 
 /**
  * @param  int  $char
@@ -466,10 +564,11 @@ function white_space(int &$char, string &$notam_str, array &$tokens) {
  * @param  array  $tokens
  */
 function read_till_next_section(int &$char, string &$notam_str, array &$tokens) {
+  $len = strlen($notam_str);
   $token = new TOKEN(NotamToken::UNKNOWN);
   $token->start = $char;
   // skip until new line
-  while ($notam_str[$char + 1] !== ')') {
+  while ($char + 1 <= $len && $notam_str[$char + 1] !== ')') {
     $char++;
   }
   $token->end = $char;
@@ -498,46 +597,26 @@ function render_tokens_to_html(array $tokens, string $notam_str) {
   return  $html;
 }
 
-function parse_date(NOTAM &$notam, string &$notam_str, int &$char) {
-  $year = substr($notam_str, $char, 2);
-  $char = $char + 2;
+function parse_date(string $century, string $string, $idx = 0) {
+  $year = substr($string, $idx, 2);
+  $idx = $idx + 2;
 
-  $month = substr($notam_str, $char, 2);
-  $char = $char + 2;
+  $month = substr($string, $idx, 2);
+  $idx = $idx + 2;
 
-  $day = substr($notam_str, $char, 2);
-  $char = $char + 2;
+  $day = substr($string, $idx, 2);
+  $idx = $idx + 2;
 
-  $hour = substr($notam_str, $char, 2);
-  $char = $char + 2;
+  $hour = substr($string, $idx, 2);
+  $idx = $idx + 2;
 
-  $minute = substr($notam_str, $char, 2);
-  $char = $char + 2;
-  $date = new DateTime('now', new DateTimeZone('UTC'));
-  $date->setDate((int) $notam->century . $year, (int) $month, (int) $day);
+  $minute = substr($string, $idx, 2);
+  $idx = $idx + 2;
+
+  $date = new \DateTime('now', new \DateTimeZone('UTC'));
+  $date->setDate((int) ($century . $year), (int) $month, (int) $day);
   $date->setTime((int) $hour, (int) $minute, 00);
   return $date;
-}
-
-function parse_c(NOTAM &$notam, string &$notam_str, int &$char) {
-  // skip white space
-  while (substr($notam_str, $char, 1) === " ") {
-    $char++;
-  }
-
-  if (substr($notam_str, $char, 4) === 'PERM') {
-    $char = $char + 4;
-    $notam->C->permanent = TRUE;
-  }
-  else {
-    $notam->C->dateTime = parse_date($notam, $notam_str, $char);
-    while (substr($notam_str, $char, 1) === " ") {
-      $char++;
-    }
-    if (substr($notam_str, $char, 3) === 'EST') {
-      $notam->C->estimate = TRUE;
-    }
-  }
 }
 
 class NOTAM {
@@ -636,17 +715,23 @@ class NOTAM_Q {
    * influence. It is specified by an 11-character latitude and longitude
    * accurate to one minute.
    *
+   *
+   * example 4159N08754W005
+   *
+   * @var string coordinates
+   */
+  public string $coordinates;
+
+  /**
    * The radius is a three-digit distance representing the radius of
    * influence in whole nautical miles. A radius that includes a decimal will
    * be rounded to the next higher whole nautical mile. The radius
    * impacts the pilot briefing coverage and number of NOTAMs received
    * in a NOTAM query, so it must be as precise as possible.
-   *
-   * example 4159N08754W005
-   *
-   * @var string coordinates / Radius
+   *  @var string $radius
    */
-  public string $coordinates_radius = '';
+  public string $radius;
+
 }
 
 /**
@@ -671,7 +756,7 @@ class NOTAM_A {
  *  Effective date/time (UTC)
  */
 class NOTAM_B {
-  public DateTime $dateTime;
+  public \DateTime $dateTime;
 }
 
 /**
@@ -683,7 +768,7 @@ class NOTAM_B {
  * Expiration date/time (UTC)
  */
 class NOTAM_C {
-  public ?DateTime $dateTime = NULL;
+  public ?\DateTime $dateTime = NULL;
   public bool $permanent = FALSE;
   public bool $estimate = FALSE;
 }
@@ -742,7 +827,14 @@ class NOTAM_E {
  * Lower altitude limit (Used with Airspace NOTAMs)
  */
 class NOTAM_F {
+  public string $feet;
 
+  /**
+   * AGL  - above ground level
+   * AMSL - above mean sea level
+   * @var string
+   */
+  public string $reference;
 }
 
 /**
@@ -824,414 +916,124 @@ class NOTAM_SCOPE {
  * certain purposes (intentions) and thus allows
  * retrieval according to the user’s requirements.
  */
-class NOTAM_PURPOSE {
+enum NOTAM_PURPOSE: string {
 
   /**
    * NOTAM selected for the immediate attention of aircraft operators
    * @var string
    */
-  public string $N = 'N';
+  case N = 'N';
 
   /**
    * NOTAM selected for pre-flight information briefing
    * @var string
    */
-  public string $B = 'B';
+  case B = 'B';
 
   /**
    * NOTAM concerning flight operations
    * @var string
    */
-  public string $O = 'O';
+  case O = 'O';
 
   /**
    * Miscellaneous NOTAM; not subject for briefing, but is available on request
    * @var string
    */
-  public string $M = 'M';
+  case M = 'M';
 
   /**
    * NOTAM is a Checklist
    * @var string
    */
-  public string $K = 'K';
+  case K = 'K';
 
-  public array $cases = [
-    'N',
-    'B',
-    'O',
-    'M',
-    'K',
-  ];
 }
 
-class NOTAM_TRAFFIC {
+enum NOTAM_TRAFFIC: string {
 
   /**
    * Instrument Flight Rules (IFR)
    * @var string
    */
-  public string $I = 'I';
+  case I = 'I';
 
   /**
    * Visual Flight Rules (VFR)
    * @var string
    */
-  public string $V = 'V';
+  case V = 'V';
 
   /**
    * NOTAM is a Checklist
    * @var string
    */
-  public string $K = 'K';
-
-  public array $cases = [
-    'I',
-    'V',
-    'K'
-  ];
+  case K = 'K';
 }
 
-class NOTAM_SERIES {
+enum NOTAM_SERIES: string {
   /**
    * Aerodrome Movement Areas
    */
-  public string $B = 'B';
+  case B = 'B';
 
   /**
    * Published Services
    */
-  public string $C = 'C';
+  case C = 'C';
 
   /**
    * Special Activity Airspace
    */
-  public string $D = 'D';
+  case D = 'D';
 
   /**
    * Airspace Events and Activities
    */
-  public string $E = 'E';
+  case E = 'E';
 
   /**
    * Airways and Air Traffic Routes
    */
-  public string $G = 'G';
+  case G = 'G';
 
   /**
    * Regulatory NOTAMs
    */
-  public string $H = 'H';
+  case H = 'H';
 
   /**
    * Apron/Ramp and Facilities APN
    */
-  public string $I = 'I';
+  case I = 'I';
 
   /**
    * Obstructions
    */
-  public string $J = 'J';
+  case J = 'J';
 
   /**
    * FCC Obstructions ASR assigned
    */
-  public string $K = 'K';
+  case K = 'K';
 
   /**
    * Ground-Based Navigational Aids
    */
-  public string $N = 'N';
+  case N = 'N';
 
   /**
    * Field Condition NOTAM
    */
-  public string $R = 'R';
+  case R = 'R';
 
   /**
    * Published Instrument Procedures
    */
-  public string $V = 'V';
+  case V = 'V';
 
   /**
    * Satellite Based Information
    */
-  public string $Z = 'Z';
-
-  public array $cases = [
-    'B',
-    'C',
-    'D',
-    'E',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'N',
-    'R',
-    'V',
-    'Z',
-  ];
-}
-
-
-
-
-function parse_notam(string $notam_str) {
-  $notam_str = trim($notam_str, "\n\r");
-  $notam = notam_factory("20");
-  /**
-   * F0610/22 NOTAMR F0607/22
-   *
-   *          number           year                  type                              number                year
-   * series      |               |                     |                    series        |                    |
-   *   |   +-----+-----+       +-+-+       +-----------+-----------+          |    +------+------+          +--+-+
-   *   |   |           |       |   |       |                       |          |    |             |          |    |
-   * +---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-   * | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 |
-   * +---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-   * | F | 0 | 6 | 1 | 0 | / | 2 | 2 |   | N | O  | T  | A  | M  | R  |    | F  |  0 |  6 |  0 |  7 | /  |  2 |  2 |
-   * +---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-   *
-   */
-  $notam->ident->series = substr( $notam_str, 0, 1);
-  $notam->ident->number = substr( $notam_str, 1, 4);
-  $notam->ident->year = substr( $notam_str, 6, 2);
-  $notam->ident->type = substr( $notam_str, 9, 6);
-  /**
-   * N - new
-   * R - Replace
-   * C - Cancel
-   * @var string $type_code
-   */
-  $type_code = substr( $notam_str, 14, 1);
-  if ($type_code === "R" || $type_code === "C") {
-    $notam->ident->ref_series = substr( $notam_str, 16, 1);
-    $notam->ident->ref_number = substr( $notam_str, 17, 4);
-    $notam->ident->ref_year = substr( $notam_str, 22, 2);
-  }
-
-  $notam_str_len = strlen($notam_str);
-  $start_of_line_2 = strpos($notam_str, "\n") + 1;
-  $char = $start_of_line_2;
-
-  while ($char < $notam_str_len) {
-    if (substr($notam_str, $char, 2) === "Q)") {
-      /*
-       * Q) YMMM/QPAXX/I/NBO/A/000/999/3740S14451E005
-       **/
-      // skip past "Q)"
-      $char = $char + 2;
-      // skip white space
-      while (substr($notam_str, $char, 1) === " ") {
-        $char++;
-      }
-      $notam->Q->fir = substr($notam_str, $char, 4);
-      $char = $char + 5; // FIR and slash
-
-      $notam->Q->notam_code = substr($notam_str, $char, 5);
-      $char = $char + 6; // notam_code and slash
-
-      while (substr($notam_str, $char, 1) !== "/") {
-        $notam->Q->traffic .= substr($notam_str, $char, 1);
-        $char++;
-      }
-      $char++; // slash
-
-      while (substr($notam_str, $char, 1) !== "/") {
-        $notam->Q->purpose .= substr($notam_str, $char, 1);
-        $char++;
-      }
-      $char++; // slash
-
-      while (substr($notam_str, $char, 1) !== "/") {
-        $notam->Q->scope .= substr($notam_str, $char, 1);
-        $char++;
-      }
-      $char++; // slash
-
-      $notam->Q->lower = substr($notam_str, $char, 3);
-      $char = $char + 4; // lower and slash
-
-      $notam->Q->upper = substr($notam_str, $char, 3);
-      $char = $char + 4; // lower and slash
-
-      $notam->Q->coordinates_radius = substr($notam_str, $char, 14);
-      $char = $char + 14; // coordinates, radius.
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "A)") {
-      /*
-       * A) YMML
-       **/
-      // skip past "A)"
-      $char = $char + 2;
-      // skip white space
-      while (substr($notam_str, $char, 1) === " ") {
-        $char++;
-      }
-      /**
-       * @todo non-icao codes?
-       **/
-      $notam->A->location = substr($notam_str, $char, 4);
-      $char = $char + 4; // ICAO code
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "B)") {
-      /*
-       * B) 2203090629
-       **/
-      // skip past "B)"
-      $char = $char + 2;
-      // skip white space
-      while (substr($notam_str, $char, 1) === " ") {
-        $char++;
-      }
-
-      $notam->B->dateTime = parse_date($notam, $notam_str, $char);
-
-      // skip white space
-      while (substr($notam_str, $char, 1) === " ") {
-        $char++;
-      }
-      if (substr($notam_str, $char, 2) === "C)") {
-        /*
-         *               |
-         * B) 2203090629 C) PERM
-         * B) 2203090629 C) 2208040600
-         **/
-        // skip past "C)"
-        $char = $char + 2;
-        parse_c($notam, $notam_str, $char);
-      }
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "C)") {
-      /*
-       * C) PERM
-       * C) 2208040600
-       **/
-      // skip past "C)"
-      $char = $char + 2;
-
-      parse_c($notam, $notam_str, $char);
-
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "D)") {
-      /*
-       * D) MON WED THU 0900-1300, TUE FRI SAT 0900-2000
-       **/
-      // skip past "D)"
-      $char = $char + 2;
-
-      // skip white space
-      while (substr($notam_str, $char, 1) === " ") {
-        $char++;
-      }
-
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        /**
-         * @todo parse schedule.
-         */
-        $notam->D->schedule .= substr($notam_str, $char, 1);
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "E)") {
-      /*
-       * E) AIP DEP AND APCH(DAP) EAST YMML AMD
-       * AMD EXISTING LIGHTING CAUTION NOTE ON THE FLW STAR CHARTS TO READ:
-       * RWY 34 IS INDICATED BY RUNWAY THRESHOLD IDENTIFICATION LIGHTS,
-       * ESSENDON AIRPORT 5NM SE OF ML.
-       **/
-      // skip past "D)"
-      $char = $char + 2;
-
-      // skip white space
-      while (substr($notam_str, $char, 1) === " ") {
-        $char++;
-      }
-
-      // skip until new line
-      while (substr($notam_str, $char, 1) !== "") {
-        if (substr($notam_str, $char, 1) === "\n") {
-          switch (substr($notam_str, $char + 1, 2)) {
-            case "F)":
-              break 2;
-            case "G)":
-              break 2;
-          }
-        }
-        /**
-         * @todo parse schedule.
-         */
-        $notam->E->body .= substr($notam_str, $char, 1);
-        $char++;
-      }
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "F)") {
-      /*
-       * F) 1500FT AGL
-       **/
-      // skip past "F)"
-      $char = $char + 2;
-
-      //@todo parse this
-
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else if (substr($notam_str, $char, 2) === "G)") {
-      /*
-       * G) 17999FT AMSL
-       **/
-      // skip past "G)"
-      $char = $char + 2;
-
-      //@todo parse this
-
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-    else {
-      // skip until new line
-      while (!in_array(substr($notam_str, $char, 1), ["\n", "", FALSE])) {
-        $char++;
-      }
-      $char++;
-    }
-  }
-
-  return $notam;
+  case Z = 'Z';
 }
