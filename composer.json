@@ -1,9 +1,10 @@
 {
   "name": "l-four/notam",
-  "description": "description",
+  "description": "Parse ICAO formatted NOTAM messages.",
   "minimum-stability": "stable",
+  "version": "0.1.0",
   "type": "library",
-  "license": "proprietary",
+  "license": "GPL-3.0-only",
   "authors": [
     {
       "name": "Kyah Rindlisbacher",
@@ -13,8 +14,9 @@
   "require": {
   },
   "autoload": {
-    "psr-0": {
-      "Monolog": "src"
+    "psr-4": {
+      "LFour\\notam\\": "src/"
     }
   }
 }
+
