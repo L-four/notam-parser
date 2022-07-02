@@ -4,58 +4,57 @@ declare(strict_types=1);
 
 namespace LFour\notam;
 
-enum NotamToken {
-  case WHITE_SPACE;
-  case SLASH;
+enum NotamToken: int {
+  case WHITE_SPACE = 0;
+  case SLASH = 1;
 
-  case IDENT_SERIES;
-  case IDENT_NUMBER;
-  case IDENT_YEAR;
-  case IDENT_TYPE;
-  case IDENT_REF_YEAR;
-  case IDENT_REF_NUMBER;
-  case IDENT_REF_SERIES;
+  case IDENT_SERIES = 2;
+  case IDENT_NUMBER = 3;
+  case IDENT_YEAR = 4;
+  case IDENT_TYPE = 5;
+  case IDENT_REF_YEAR = 6;
+  case IDENT_REF_NUMBER = 7;
+  case IDENT_REF_SERIES = 8;
 
-  case UNKNOWN;
+  case UNKNOWN = 9;
 
-  case Q;
-  case Q_FIR;
-  case Q_NOTAM_CODE;
-  case Q_TRAFFIC;
-  case Q_PURPOSE;
-  case Q_SCOPE;
-  case Q_LOWER;
-  case Q_UPPER;
-  case Q_COORDINATES;
-  case Q_RADIUS;
+  case Q = 10;
+  case Q_FIR = 11;
+  case Q_NOTAM_CODE = 12;
+  case Q_TRAFFIC = 13;
+  case Q_PURPOSE = 14;
+  case Q_SCOPE = 15;
+  case Q_LOWER = 16;
+  case Q_UPPER = 17;
+  case Q_COORDINATES = 18;
+  case Q_RADIUS = 19;
 
-  case A;
-  case A_LOCATION;
+  case A = 20;
+  case A_LOCATION = 21;
 
-  case YEAR;
-  case MINUTE;
-  case HOUR;
-  case DAY;
-  case MONTH;
+  case YEAR = 22;
+  case MINUTE = 23;
+  case HOUR = 24;
+  case DAY = 25;
+  case MONTH = 26;
 
-  case B;
+  case B = 27;
 
-  case C;
-  case C_PERMANENT;
-  case C_ESTIMATE;
+  case C = 28;
+  case C_PERMANENT = 29;
+  case C_ESTIMATE = 30;
 
-  case D;
-  case D_SCHEDULE;
+  case D = 31;
+  case D_SCHEDULE = 32;
 
-  case E;
-  case E_TEXT;
+  case E = 33;
+  case E_TEXT = 34;
 
-  case F;
-  case F_LEVEL;
+  case F = 35;
+  case F_LEVEL = 36;
 
-  case G;
-  case G_LEVEL;
-
+  case G = 37;
+  case G_LEVEL = 38;
 
 }
 
@@ -63,12 +62,22 @@ enum NotamToken {
 $contents = file_get_contents('notams.txt');
 $notams = explode('============================================', $contents);
 
-foreach ($notams as $notam) {
-  $tokens = tokenize_notam($notam);
-  foreach ($tokens as $token) {
-    print $token->type->name . ':' . substr($notam, $token->start, $token->end - $token->start) . "\n";
-  }
-  break;
+switch(php_sapi_name()) {
+  case "cli":
+    foreach ($notams as $notam) {
+      $tokens = tokenize_notam($notam);
+      foreach ($tokens as $token) {
+        print $token->type->name . ':' . substr($notam, $token->start,
+            $token->end - $token->start) . "\n";
+      }
+    }
+    break;
+  case "cli-server":
+    foreach ($notams as $notam) {
+      $tokens = tokenize_notam($notam);
+      print render_tokens_to_html($tokens, $notam);
+    }
+    break;
 }
 
 print "\n\n";
@@ -298,8 +307,11 @@ function tokenize_notam(string $notam_str): array {
         $token = new TOKEN(NotamToken::D_SCHEDULE, $char);
 
         // skip until new line
-        while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
+        while ($notam_str[$char + 1] !== ')') {
           $char++;
+        }
+        if ($notam_str[$char] === "\n") {
+          $char--;
         }
         $token->end = $char;
 
@@ -464,6 +476,26 @@ function read_till_next_section(int &$char, string &$notam_str, array &$tokens) 
   if ($token->start != $token->end) {
     $tokens[] = $token;
   }
+}
+
+/**
+ * @param \LFour\notam\TOKEN[]  $tokens
+ * @param string $notam_str
+ *
+ * @return string
+ */
+function render_tokens_to_html(array $tokens, string $notam_str) {
+  $colours = ['#91F9E5', '#76f7bf', '#5fdd9d', '#499167'];
+  $num_colours = count($colours);
+  $html = '<pre>';
+  $i = 0;
+  foreach ($tokens as $token) {
+    $color = $colours[$i % $num_colours];
+    $html .= "<span style='background-color: $color;'><abr title='" . $token->type->name . "'>" . substr($notam_str, $token->start, $token->end - $token->start) . "</abr></span>";
+    $i++;
+  }
+  $html .= '</pre>';
+  return  $html;
 }
 
 function parse_date(NOTAM &$notam, string &$notam_str, int &$char) {
