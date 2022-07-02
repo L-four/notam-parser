@@ -141,255 +141,271 @@ function tokenize_notam(string $notam_str): array {
     $char = $char + 2;
   }
 
-  white_space($char, $notam_str, $tokens);
-
-  /*
-  * Q) YMMM/QPAXX/I/NBO/A/000/999/3740S14451E005
-  **/
-
-  if ($notam_str[$char] !== 'Q' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-
-  $tokens[] = new TOKEN(NotamToken::Q, $char, $char+2);
-  $char = $char + 2;
-
-  white_space($char, $notam_str, $tokens);
-
-  $tokens[] = new TOKEN(NotamToken::Q_FIR, $char, $char+4);
-  $char = $char + 4;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $tokens[] = new TOKEN(NotamToken::Q_NOTAM_CODE, $char, $char+5);
-  $char = $char + 5;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $token = new TOKEN(NotamToken::Q_TRAFFIC, $char);
-  while ($notam_str[$char] !== "/") {
-    $char++;
-  }
-  $token->end = $char;
-  $tokens[] = $token;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $token = new TOKEN(NotamToken::Q_PURPOSE, $char);
-  while ($notam_str[$char] !== "/") {
-    $char++;
-  }
-  $token->end = $char;
-  $tokens[] = $token;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $token = new TOKEN(NotamToken::Q_SCOPE, $char);
-  while ($notam_str[$char] !== "/") {
-    $char++;
-  }
-  $token->end = $char;
-  $tokens[] = $token;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $tokens[] = new TOKEN(NotamToken::Q_LOWER, $char, $char+3);
-  $char = $char + 3;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $tokens[] = new TOKEN(NotamToken::Q_UPPER, $char, $char+3);
-  $char = $char + 3;
-
-  $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char+1);
-  $char++;
-
-  $tokens[] = new TOKEN(NotamToken::Q_COORDINATES, $char, $char+11);
-  $char = $char + 11;
-
-  $tokens[] = new TOKEN(NotamToken::Q_RADIUS, $char, $char+3);
-  $char = $char + 3;
-
-  white_space($char, $notam_str, $tokens);
-
-  if ($notam_str[$char] !== 'A' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-
-  /*
-   * A) YMML
-   **/
-  $tokens[] = new TOKEN(NotamToken::A, $char, $char+2);
-  $char = $char + 2;
-
-  white_space($char, $notam_str, $tokens);
-
-  $tokens[] = new TOKEN(NotamToken::A_LOCATION, $char, $char+4); // ICAO code
-  $char = $char + 4;
-
-  white_space($char, $notam_str, $tokens);
-
-  if ($notam_str[$char] !== 'B' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-  /*
-   * B) 2203090629
-   **/
-  $tokens[] = new TOKEN(NotamToken::B, $char, $char+2);
-  $char = $char + 2;
-
-  white_space($char, $notam_str, $tokens);
-
-  tokenize_date($char, $tokens);
-
-  white_space($char, $notam_str, $tokens);
-
-  if ($notam_str[$char] !== 'C' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-  /*
-   * C) PERM
-   * C) 2208040600
-   **/
-
-  $tokens[] = new TOKEN(NotamToken::C, $char, $char+2);
-  $char = $char + 2;
-
-  white_space($char, $notam_str, $tokens);
-
-  if (substr($notam_str, $char, 4) === 'PERM') {
-    $tokens[] = new TOKEN(NotamToken::C_PERMANENT, $char, $char+4);
-    $char = $char + 4;
-  }
-  else {
-    tokenize_date($char, $tokens);
-
+  while (TRUE) {
     white_space($char, $notam_str, $tokens);
 
-    if (substr($notam_str, $char, 3) === 'EST') {
-      $tokens[] = new TOKEN(NotamToken::C_ESTIMATE, $char, $char+3);
-      $char = $char + 3;
-    }
-  }
+    if ($notam_str[$char + 1] === ")") {
+      if ($notam_str[$char] === 'Q') {
 
-  white_space($char, $notam_str, $tokens);
+        /*
+        * Q) YMMM/QPAXX/I/NBO/A/000/999/3740S14451E005
+        **/
+        read_till_next_section($char, $notam_str, $tokens);
 
-  if ($notam_str[$char] !== 'D' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-  /*
-   * D) MON WED THU 0900-1300, TUE FRI SAT 0900-2000
-   **/
 
-  $tokens[] = new TOKEN(NotamToken::D, $char, $char+2);
-  $char = $char + 2;
+        $tokens[] = new TOKEN(NotamToken::Q, $char, $char + 2);
+        $char = $char + 2;
 
-  white_space($char, $notam_str, $tokens);
+        white_space($char, $notam_str, $tokens);
 
-  $token = new TOKEN(NotamToken::D_SCHEDULE, $char);
+        $tokens[] = new TOKEN(NotamToken::Q_FIR, $char, $char + 4);
+        $char = $char + 4;
 
-  // skip until new line
-  while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
-    $char++;
-  }
-  $token->end = $char;
-
-  $tokens[] = $token;
-
-  white_space($char, $notam_str, $tokens);
-
-  if ($notam_str[$char] !== 'E' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-  /*
-   * E) AIP DEP AND APCH(DAP) EAST YMML AMD
-   * AMD EXISTING LIGHTING CAUTION NOTE ON THE FLW STAR CHARTS TO READ:
-   * RWY 34 IS INDICATED BY RUNWAY THRESHOLD IDENTIFICATION LIGHTS,
-   * ESSENDON AIRPORT 5NM SE OF ML.
-   **/
-
-  $tokens[] = new TOKEN(NotamToken::E, $char, $char+2);
-  $char = $char + 2;
-
-  white_space($char, $notam_str, $tokens);
-
-  $token = new TOKEN(NotamToken::E_TEXT, $char);
-
-  // skip until new line
-  while ($char <= strlen($notam_str)) {
-    switch (substr($notam_str, $char + 1, 2)) {
-      case "F)":
-        break 2;
-      case "G)":
-        break 2;
-      default:
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
         $char++;
+
+        $tokens[] = new TOKEN(NotamToken::Q_NOTAM_CODE, $char, $char + 5);
+        $char = $char + 5;
+
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+        $char++;
+
+        $token = new TOKEN(NotamToken::Q_TRAFFIC, $char);
+        while ($notam_str[$char] !== "/") {
+          $char++;
+        }
+        $token->end = $char;
+        $tokens[] = $token;
+
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+        $char++;
+
+        $token = new TOKEN(NotamToken::Q_PURPOSE, $char);
+        while ($notam_str[$char] !== "/") {
+          $char++;
+        }
+        $token->end = $char;
+        $tokens[] = $token;
+
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+        $char++;
+
+        $token = new TOKEN(NotamToken::Q_SCOPE, $char);
+        while ($notam_str[$char] !== "/") {
+          $char++;
+        }
+        $token->end = $char;
+        $tokens[] = $token;
+
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+        $char++;
+
+        $tokens[] = new TOKEN(NotamToken::Q_LOWER, $char, $char + 3);
+        $char = $char + 3;
+
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+        $char++;
+
+        $tokens[] = new TOKEN(NotamToken::Q_UPPER, $char, $char + 3);
+        $char = $char + 3;
+
+        $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+        $char++;
+
+        $tokens[] = new TOKEN(NotamToken::Q_COORDINATES, $char, $char + 11);
+        $char = $char + 11;
+
+        $tokens[] = new TOKEN(NotamToken::Q_RADIUS, $char, $char + 3);
+        $char = $char + 3;
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else if ($notam_str[$char] === 'A') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+
+        /*
+         * A) YMML
+         **/
+        $tokens[] = new TOKEN(NotamToken::A, $char, $char + 2);
+        $char = $char + 2;
+
+        white_space($char, $notam_str, $tokens);
+
+        $tokens[] = new TOKEN(NotamToken::A_LOCATION, $char,
+          $char + 4); // ICAO code
+        $char = $char + 4;
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else if ($notam_str[$char] === 'B') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+        /*
+         * B) 2203090629
+         **/
+        $tokens[] = new TOKEN(NotamToken::B, $char, $char + 2);
+        $char = $char + 2;
+
+        white_space($char, $notam_str, $tokens);
+
+        tokenize_date($char, $tokens);
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else if ($notam_str[$char] === 'C') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+        /*
+         * C) PERM
+         * C) 2208040600
+         **/
+
+        $tokens[] = new TOKEN(NotamToken::C, $char, $char + 2);
+        $char = $char + 2;
+
+        white_space($char, $notam_str, $tokens);
+
+        if (substr($notam_str, $char, 4) === 'PERM') {
+          $tokens[] = new TOKEN(NotamToken::C_PERMANENT, $char, $char + 4);
+          $char = $char + 4;
+        }
+        else {
+          tokenize_date($char, $tokens);
+
+          white_space($char, $notam_str, $tokens);
+
+          if (substr($notam_str, $char, 3) === 'EST') {
+            $tokens[] = new TOKEN(NotamToken::C_ESTIMATE, $char, $char + 3);
+            $char = $char + 3;
+          }
+        }
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else if ($notam_str[$char] === 'D') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+        /*
+         * D) MON WED THU 0900-1300, TUE FRI SAT 0900-2000
+         **/
+
+        $tokens[] = new TOKEN(NotamToken::D, $char, $char + 2);
+        $char = $char + 2;
+
+        white_space($char, $notam_str, $tokens);
+
+        $token = new TOKEN(NotamToken::D_SCHEDULE, $char);
+
+        // skip until new line
+        while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
+          $char++;
+        }
+        $token->end = $char;
+
+        $tokens[] = $token;
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else if ($notam_str[$char] === 'E') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+        /*
+         * E) AIP DEP AND APCH(DAP) EAST YMML AMD
+         * AMD EXISTING LIGHTING CAUTION NOTE ON THE FLW STAR CHARTS TO READ:
+         * RWY 34 IS INDICATED BY RUNWAY THRESHOLD IDENTIFICATION LIGHTS,
+         * ESSENDON AIRPORT 5NM SE OF ML.
+         **/
+
+        $tokens[] = new TOKEN(NotamToken::E, $char, $char + 2);
+        $char = $char + 2;
+
+        white_space($char, $notam_str, $tokens);
+
+        $token = new TOKEN(NotamToken::E_TEXT, $char);
+
+        // skip until new line
+        while ($char <= strlen($notam_str)) {
+          switch (substr($notam_str, $char + 1, 2)) {
+            case "F)":
+              break 2;
+            case "G)":
+              break 2;
+            default:
+              $char++;
+              break;
+          }
+        }
+
+        $token->end = $char;
+        $tokens[] = $token;
+
+        white_space($char, $notam_str, $tokens);
+
+        if ($char >= strlen($notam_str)) {
+          break;
+        }
+      }
+      else if ($notam_str[$char] === 'F') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+        /*
+         * F) 1500FT AGL
+         **/
+
+        $tokens[] = new TOKEN(NotamToken::F, $char, $char + 2);
+        $char = $char + 2;
+
+        //@todo parse this
+
+        $token = new TOKEN(NotamToken::F_LEVEL, $char);
+
+        // skip until new line
+        while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
+          $char++;
+        }
+        $token->end = $char;
+
+        $tokens[] = $token;
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else if ($notam_str[$char] === 'G') {
+        read_till_next_section($char, $notam_str, $tokens);
+
+        /*
+         * G) 17999FT AMSL
+         **/
+
+        $tokens[] = new TOKEN(NotamToken::G, $char, $char + 2);
+        $char = $char + 2;
+
+        //@todo parse this
+
+        $token = new TOKEN(NotamToken::G_LEVEL, $char);
+
+        // skip until new line
+        while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
+          $char++;
+        }
+        $token->end = $char;
+
+        $tokens[] = $token;
+
+        white_space($char, $notam_str, $tokens);
+      }
+      else {
+        if ($char >= strlen($notam_str)) {
+          break;
+        }
+        read_till_next_section($char, $notam_str, $tokens);
         break;
+      }
+    }
+    else {
+      read_till_next_section($char, $notam_str, $tokens);
     }
   }
-
-  $token->end = $char;
-  $tokens[] = $token;
-
-  white_space($char, $notam_str, $tokens);
-
-  if ($char >= strlen($notam_str)) {
-    return $tokens;
-  }
-
-  if ($notam_str[$char] !== 'F' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-  /*
-   * F) 1500FT AGL
-   **/
-
-  $tokens[] = new TOKEN(NotamToken::F, $char, $char+2);
-  $char = $char + 2;
-
-  //@todo parse this
-
-  $token = new TOKEN(NotamToken::F_LEVEL, $char);
-
-  // skip until new line
-  while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
-    $char++;
-  }
-  $token->end = $char;
-
-  $tokens[] = $token;
-
-  white_space($char, $notam_str, $tokens);
-
-  if ($notam_str[$char] !== 'G' || $notam_str[$char+1] !== ")") {
-    unknowen($char, $notam_str, $tokens);
-  }
-  /*
-   * G) 17999FT AMSL
-   **/
-
-  $tokens[] = new TOKEN(NotamToken::G, $char, $char+2);
-  $char = $char + 2;
-
-  //@todo parse this
-
-  $token = new TOKEN(NotamToken::G_LEVEL, $char);
-
-  // skip until new line
-  while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
-    $char++;
-  }
-  $token->end = $char;
-
-  $tokens[] = $token;
-
-  white_space($char, $notam_str, $tokens);
 
   return $tokens;
 }
@@ -437,16 +453,17 @@ function white_space(int &$char, string &$notam_str, array &$tokens) {
  * @param  string  $notam_str
  * @param  array  $tokens
  */
-function unknowen(int &$char, string &$notam_str, array &$tokens) {
+function read_till_next_section(int &$char, string &$notam_str, array &$tokens) {
   $token = new TOKEN(NotamToken::UNKNOWN);
   $token->start = $char;
   // skip until new line
-  while (!in_array($notam_str[$char],
-      ["Q", FALSE]) && $notam_str[$char + 1] !== ')') {
+  while ($notam_str[$char + 1] !== ')') {
     $char++;
   }
   $token->end = $char;
-  $tokens[] = $token;
+  if ($token->start != $token->end) {
+    $tokens[] = $token;
+  }
 }
 
 function parse_date(NOTAM &$notam, string &$notam_str, int &$char) {
