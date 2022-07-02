@@ -1,0 +1,20 @@
+{
+  "name": "l-four/notam",
+  "description": "description",
+  "minimum-stability": "stable",
+  "type": "library",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Kyah Rindlisbacher",
+      "email": "kyah101@gmail.com"
+    }
+  ],
+  "require": {
+  },
+  "autoload": {
+    "psr-0": {
+      "Monolog": "src"
+    }
+  }
+}
