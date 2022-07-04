@@ -1,6 +1,6 @@
 <?php
 
-require  __DIR__ .  '\..\src\notam.php';
+require  __DIR__ .  '\..\vendor\autoload.php';
 
 use LFour\notam\NotamFunctions;
 

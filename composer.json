@@ -14,9 +14,9 @@
   "require": {
   },
   "autoload": {
-    "psr-4": {
-      "LFour\\notam\\": "src/"
-    }
+    "classmap": [
+      "src/notam.php"
+    ]
   }
 }
 
