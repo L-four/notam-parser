@@ -608,7 +608,7 @@ class NotamFunctions {
    * @param string $notam_string
    * @param bool $ignore_sep
    *
-   * @return array
+   * @return string[]
    * @throws \Exception
    */
   public static function tokens_descriptions(array $tokens, string $notam_string): array {
@@ -733,7 +733,7 @@ class NotamFunctions {
           $description =  "NOTAM becomes effective at <time datetime='$datetime_string'>" . $datetime_string . " (UTC)</time> <br/>";
           break;
         case NotamToken::C:
-          $description =  "NOTAM ending date time.";
+          $description =  "NOTAM ending date and time.";
           break;
         case NotamToken::C_DATE_TIME:
           $century = substr((new \DateTime('now'))->format("Y"), 0, 2);
@@ -746,7 +746,7 @@ class NotamFunctions {
           $description = "NOTAM is permanent.";
           break;
         case NotamToken::C_ESTIMATE:
-          $description = "NOTAM end of effective is an estimate.";
+          $description = "NOTAM ending date and time is an estimate.";
           break;
         case NotamToken::E:
           $description = "Main message.";
