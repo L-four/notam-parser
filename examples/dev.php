@@ -12,12 +12,19 @@ switch(php_sapi_name()) {
     $start = microtime(TRUE);
     foreach ($notams as $notam_string) {
       $tokens = NotamFunctions::tokenize_notam($notam_string);
-      foreach ($tokens as $token) {
-        print $token->type->name . ':' . substr($notam_string, $token->start,
-            $token->end - $token->start) . "\n";
+      if (in_array('tokens', $argv)) {
+        print_r($tokens);
+      }
+      if (in_array('tokens-print', $argv)) {
+        foreach ($tokens as $token) {
+          print $token->type->name . ':' . substr($notam_string, $token->start,
+              $token->end - $token->start) . "\n";
+        }
       }
       $notam = NotamFunctions::object_from_tokens($tokens, $notam_string);
-      print_r($notam);
+      if (in_array('class', $argv)) {
+        print_r($notam);
+      }
     }
     print "" . microtime(TRUE) - $start;
     break;

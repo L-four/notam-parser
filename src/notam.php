@@ -31,6 +31,7 @@ enum NotamToken {
 
   case A;
   case A_LOCATION;
+  case A_LOCATION_2;
 
   case B;
   case B_DATE_TIME;
@@ -126,6 +127,9 @@ class NotamFunctions {
           break;
         case NotamToken::A_LOCATION:
           $notam->A->location = substr($notam_str, $token->start, $token->end - $token->start);
+          break;
+        case NotamToken::A_LOCATION_2:
+          $notam->A->location_2 = substr($notam_str, $token->start, $token->end - $token->start);
           break;
         case NotamToken::B:
           break;
@@ -326,6 +330,7 @@ class NotamFunctions {
 
           /*
            * A) YMML
+           * A) YMMM/YBBB
            **/
           $tokens[] = new TOKEN(NotamToken::A, $char, $char + 2);
           $char = $char + 2;
@@ -335,6 +340,15 @@ class NotamFunctions {
           $tokens[] = new TOKEN(NotamToken::A_LOCATION, $char,
             $char + 4); // ICAO code
           $char = $char + 4;
+
+          if ($notam_str[$char] === '/') {
+            $tokens[] = new TOKEN(NotamToken::SLASH, $char, $char + 1);
+            $char++;
+
+            $tokens[] = new TOKEN(NotamToken::A_LOCATION_2, $char,
+              $char + 4); // ICAO code
+            $char = $char + 4;
+          }
 
           static::white_space($char, $notam_str, $tokens);
         }
@@ -715,6 +729,7 @@ class NotamFunctions {
           $description =  "ICAO location indicator of the aerodrome or FIR";
           break;
         case NotamToken::A_LOCATION:
+        case NotamToken::A_LOCATION_2:
           if (isset(NOTAM_LOOKUP_TABLE::$NOTAM_FIR[$value])) {
             $description =  "FIR: " . NOTAM_LOOKUP_TABLE::$NOTAM_FIR[$value];
           }
@@ -894,6 +909,11 @@ class NOTAM_A {
    * @var string
    */
   public string $location;
+  /**
+   * ICAO Location or FIR
+   * @var string
+   */
+  public string $location_2;
 }
 
 /**
