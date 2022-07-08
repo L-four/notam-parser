@@ -50,9 +50,11 @@ enum NotamToken {
 
   case F;
   case F_LEVEL;
+  case F_SFC;
 
   case G;
   case G_LEVEL;
+  case G_UNL;
 
 }
 
@@ -154,12 +156,24 @@ class NotamFunctions {
         case NotamToken::F:
           break;
         case NotamToken::F_LEVEL:
-          $notam->F->feet = substr($notam_str, $token->start, $token->end - $token->start);
+          $value = substr($notam_str, $token->start, $token->end - $token->start);
+          list($feet, $reference) = static::parse_level($value);
+          $notam->F->feet = $feet;
+          $notam->F->reference = $reference;
+          break;
+        case NotamToken::F_SFC:
+          $notam->F->surface = TRUE;
           break;
         case NotamToken::G:
           break;
         case NotamToken::G_LEVEL:
-          $notam->G->feet = substr($notam_str, $token->start, $token->end - $token->start);
+          $value = substr($notam_str, $token->start, $token->end - $token->start);
+          list($feet, $reference) = static::parse_level($value);
+          $notam->G->feet = $feet;
+          $notam->G->reference = $reference;
+          break;
+        case NotamToken::G_UNL:
+          $notam->G->unlimited = TRUE;
           break;
         case NotamToken::B_DATE_TIME:
           $notam->B->dateTime = static::parse_date($notam->century, substr($notam_str, $token->start, $token->end - $token->start));
@@ -443,18 +457,9 @@ class NotamFunctions {
 
           $token = new TOKEN(NotamToken::E_TEXT, $char);
 
-          // skip until new line
-          while ($char <= strlen($notam_str)) {
-            switch (substr($notam_str, $char + 1, 2)) {
-              case "F)":
-                break 2;
-              case "G)":
-                break 2;
-              default:
-                $char++;
-                break;
-            }
-          }
+          static::skip_till_next_section($char, $notam_str);
+
+          static::scroll_back_white_space($char, $notam_str);
 
           $token->end = $char;
           $tokens[] = $token;
@@ -470,48 +475,72 @@ class NotamFunctions {
 
           /*
            * F) 1500FT AGL
+           * F) SFC
            **/
 
           $tokens[] = new TOKEN(NotamToken::F, $char, $char + 2);
           $char = $char + 2;
 
-          //@todo parse this
-
-          $token = new TOKEN(NotamToken::F_LEVEL, $char);
-
-          // skip until new line
-          while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
-            $char++;
-          }
-          $token->end = $char;
-
-          $tokens[] = $token;
-
           static::white_space($char, $notam_str, $tokens);
+
+          /**
+           * Surface (SFC), an altitude in feet, or a flight
+           * level can be specified.
+           **/
+          if (substr($notam_str, $char, 3) === 'SFC') {
+            $tokens[] = new TOKEN(NotamToken::F_SFC, $char, $char + 3);
+            $char = $char + 3;
+
+            static::white_space($char, $notam_str, $tokens);
+          }
+          else {
+            $token = new TOKEN(NotamToken::F_LEVEL, $char);
+
+            static::skip_till_next_section($char, $notam_str);
+            static::scroll_back_white_space($char, $notam_str);
+
+            $token->end = $char;
+
+            $tokens[] = $token;
+
+            static::white_space($char, $notam_str, $tokens);
+          }
         }
         else if ($notam_str[$char] === 'G') {
           static::read_till_next_section($char, $notam_str, $tokens);
 
           /*
            * G) 17999FT AMSL
+           * G) UNL
            **/
 
           $tokens[] = new TOKEN(NotamToken::G, $char, $char + 2);
           $char = $char + 2;
 
-          //@todo parse this
-
-          $token = new TOKEN(NotamToken::G_LEVEL, $char);
-
-          // skip until new line
-          while (!in_array($notam_str[$char], ["\n", "", FALSE])) {
-            $char++;
-          }
-          $token->end = $char;
-
-          $tokens[] = $token;
-
           static::white_space($char, $notam_str, $tokens);
+
+          /**
+           * Surface (SFC), an altitude in feet, or a flight
+           * level can be specified.
+           **/
+          if (substr($notam_str, $char, 3) === 'UNL') {
+            $tokens[] = new TOKEN(NotamToken::G_UNL, $char, $char + 3);
+            $char = $char + 3;
+
+            static::white_space($char, $notam_str, $tokens);
+          }
+          else {
+            $token = new TOKEN(NotamToken::G_LEVEL, $char);
+
+            static::skip_till_next_section($char, $notam_str);
+            static::scroll_back_white_space($char, $notam_str);
+
+            $token->end = $char;
+
+            $tokens[] = $token;
+
+            static::white_space($char, $notam_str, $tokens);
+          }
         }
         else {
           if ($char >= strlen($notam_str)) {
@@ -522,7 +551,9 @@ class NotamFunctions {
         }
       }
       else {
-        static::read_till_next_section($char, $notam_str, $tokens);
+        if (!static::read_till_next_section($char, $notam_str, $tokens)) {
+          break; // we have reached the end or cannot find another section
+        }
       }
     }
 
@@ -535,10 +566,11 @@ class NotamFunctions {
    * @param  array  $tokens
    */
   public static function white_space(int &$char, string &$notam_str, array &$tokens) {
+    $len = strlen($notam_str);
     $token = new TOKEN(NotamToken::WHITE_SPACE);
     $token->start = $char;
     // skip until new line
-    while (in_array(substr($notam_str, $char, 1), ["\n", " "])) {
+    while ($char < $len && in_array($notam_str[$char], ["\n", " "])) {
       $char++;
     }
     $token->end = $char;
@@ -550,19 +582,75 @@ class NotamFunctions {
   /**
    * @param  int  $char
    * @param  string  $notam_str
-   * @param  array  $tokens
    */
-  public static function read_till_next_section(int &$char, string &$notam_str, array &$tokens): void {
+  public static function scroll_back_white_space(int &$char, string &$notam_str) {
+    if ($char <= 1) {
+      return;
+    }
+    // skip until new line
+    while (in_array($notam_str[$char - 1], ["\n", " "])) {
+      $char--;
+    }
+  }
+
+  /**
+   * @param  int  $char
+   * @param  string  $notam_str
+   * @param  array  $tokens
+   * @return bool returns true if char is advanced
+   */
+  public static function read_till_next_section(int &$char, string &$notam_str, array &$tokens): bool {
     $len = strlen($notam_str);
     $token = new TOKEN(NotamToken::UNKNOWN);
     $token->start = $char;
-    // skip until new line
-    while ($char + 1 <= $len && $notam_str[$char + 1] !== ')') {
+
+    // end of text
+    if ($char === ($len-1)) {
+      return FALSE;
+    }
+
+    if ($char === 0 && $notam_str[$char + 1] !== ')') {
+      return FALSE;
+    }
+    // skip until section start
+    // "XXXXXXXXX C) XXXXXX"
+    // OR
+    // "C) XXXXX"
+    while ($char + 1 <= $len) {
+      if ($notam_str[$char + 1] === ')' && ($notam_str[$char + -1] === ' ' || $notam_str[$char + -1] === "\n")) {
+        break;
+      }
       $char++;
     }
     $token->end = $char;
     if ($token->start != $token->end) {
       $tokens[] = $token;
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * @param  int  $char
+   * @param  string  $notam_str
+   */
+  public static function skip_till_next_section(int &$char, string &$notam_str): void {
+    $last_idx = strlen($notam_str) - 1;
+
+    // skip until section start
+    // "XXXXXXXXX C) XXXXXX"
+    // OR
+    // "C) XXXXX"
+    while ($char != $last_idx) {
+      if ($notam_str[$char + 1] === ')' && ($notam_str[$char + -1] === ' ' || $notam_str[$char + -1] === "\n")) {
+        break;
+      }
+      $char++;
+    }
+
+    if ($char == $last_idx) {
+      $char++;
     }
   }
 
@@ -615,6 +703,15 @@ class NotamFunctions {
     $date->setDate((int) ($century . $year), (int) $month, (int) $day);
     $date->setTime((int) $hour, (int) $minute, 00);
     return $date;
+  }
+
+  public static function parse_level(string $string) {
+    /// 1500FT AGL
+    /// 17999FT AMSL
+    $ftpos = strpos($string,"FT");
+    $feet = substr($string, 0, $ftpos);
+    $reference = substr($string, $ftpos + 3, strlen($string) - ($ftpos + 2));
+    return [$feet, $reference];
   }
 
   /**
@@ -768,6 +865,26 @@ class NotamFunctions {
           break;
         case NotamToken::E_TEXT:
           $description = "Main message body.";
+          break;
+        case NotamToken::F:
+          $description = "Lower level.";
+          break;
+        case NotamToken::G:
+          $description = "Upper level.";
+          break;
+        case NotamToken::G_LEVEL:
+        case NotamToken::F_LEVEL:
+          list($feet, $reference) = static::parse_level($value);
+          $description = $feet . " feet";
+          if (isset(NOTAM_LOOKUP_TABLE::$NOTAM_lEVEL_ABBR[$reference])) {
+            $description .= " " . NOTAM_LOOKUP_TABLE::$NOTAM_lEVEL_ABBR[$reference];
+          }
+          break;
+        case NotamToken::F_SFC:
+          $description = "Surface";
+          break;
+        case NotamToken::G_UNL:
+          $description = "Unlimited";
           break;
         default:
           break;
@@ -1004,6 +1121,8 @@ class NOTAM_F {
    * @var string
    */
   public string $reference;
+
+  public bool $surface = false;
 }
 
 /**
@@ -1026,6 +1145,7 @@ class NOTAM_G {
    * @var string
    */
   public string $reference;
+  public bool $unlimited = false;
 }
 
 function notam_factory(string $century) {
@@ -1552,6 +1672,11 @@ class NOTAM_LOOKUP_TABLE {
     "E" => "Enroute",
     "W" => "Navigation warning",
     "K" => "Checklist",
+  ];
+
+  static public $NOTAM_lEVEL_ABBR = [
+    'AGL' => 'above ground level',
+    'AMSL' => 'above mean sea level'
   ];
 
 
