@@ -751,14 +751,20 @@ class NotamFunctions {
           $description = 'Qualifier Line';
           break;
         case NotamToken::Q_FIR:
-          $description = "Flight Information Region: <b>" . NOTAM_LOOKUP_TABLE::$NOTAM_FIR[$value] . "</b> <a href='https://en.wikipedia.org/wiki/$value'>Wiki</a>";
+          if (isset(NOTAM_LOOKUP_TABLE::$NOTAM_FIR[$value])) {
+            $fir_description = NOTAM_LOOKUP_TABLE::$NOTAM_FIR[$value];
+          }
+          else {
+            $fir_description = 'No extra infomation for ' . $value;
+          }
+          $description = "Flight Information Region: <b>" . $fir_description . "</b> <a href='https://en.wikipedia.org/wiki/$value'>Wiki</a>";
           break;
         case NotamToken::Q_NOTAM_CODE:
-          $description = "Subject: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_2[$value[1]] . "</b><br>";
-          $description .= "Signification: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_2_and_3[$value[1] . $value[2]]['signification'] . "</b><br>";
+          $description = "<b>" . $value[1] . "</b> " . "Subject: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_2[$value[1]] . "</b><br>";
+          $description .= "<b>" . $value[1] . $value[2] . "</b> " . "Signification: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_2_and_3[$value[1] . $value[2]]['signification'] . "</b><br>";
 
-          $description .= "Status of operation: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_4[$value[3]] . "</b><br>";
-          $description .= "Signification: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_4_and_5[$value[3] . $value[4]]['signification'] . "</b><br>";
+          $description .= "<b>" . $value[3] . "</b> " . "Status of operation: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_4[$value[3]] . "</b><br>";
+          $description .= "<b>" . $value[3] . $value[4] . "</b> " . "Signification: <b>" . NOTAM_LOOKUP_TABLE::$NORAM_Q_CODE_LETTER_4_and_5[$value[3] . $value[4]]['signification'] . "</b><br>";
           break;
         case NotamToken::Q_TRAFFIC:
           if (empty($value)) {
@@ -766,7 +772,7 @@ class NotamFunctions {
           }
           $description = '';
           foreach (str_split($value) as $char) {
-            $description .=  NOTAM_LOOKUP_TABLE::$NOTAM_Q_TRAFFIC[$char] . "<br>";
+            $description .= "<b>(" . $char . ")</b> " .  NOTAM_LOOKUP_TABLE::$NOTAM_Q_TRAFFIC[$char] . "<br>";
           }
           break;
         case NotamToken::Q_PURPOSE:
@@ -775,7 +781,7 @@ class NotamFunctions {
           }
           $description = '';
           foreach (str_split($value) as $char) {
-            $description .=  NOTAM_LOOKUP_TABLE::$NOTAM_Q_PURPOSE[$char] . "<br>";
+            $description .= "<b>(" . $char . ")</b> " .  NOTAM_LOOKUP_TABLE::$NOTAM_Q_PURPOSE[$char] . "<br>";
           }
           break;
         case NotamToken::Q_SCOPE:
@@ -784,7 +790,7 @@ class NotamFunctions {
           }
           $description = '';
           foreach (str_split($value) as $char) {
-            $description .=  NOTAM_LOOKUP_TABLE::$NOTAM_Q_SCOPE[$char] . "<br>";
+            $description .= "<b>(" . $char . ")</b> " .  NOTAM_LOOKUP_TABLE::$NOTAM_Q_SCOPE[$char] . "<br>";
           }
           break;
         case NotamToken::Q_LOWER:
@@ -1637,6 +1643,8 @@ class NOTAM_LOOKUP_TABLE {
     "WIPZ" => "Palembang Sector",
     "WMFC" => "Kuala Lumpur ACC",
     "WSJC" => "Singapore ACC",
+    'YUXX' => 'Australian airspace? Military? (Not Sure)',
+    'YSHO' => 'A NOTAM will be issued as a Head Office (YSHO) NOTAM if it refers to procedures, rules or updates relevant to all pilots in Australian airspace.',
     "YBBB" => "Brisbane ACC",
     "YMMM" => "Melbourne ACC",
     "ZBPE" => "Beijing ACC",
