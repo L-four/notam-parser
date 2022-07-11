@@ -1699,7 +1699,7 @@ class NOTAM_LOOKUP_TABLE {
   static public $NORAM_Q_CODE_LETTER_2_and_3 = [
     'AA' =>
       [
-        'signification' => 'Minimum altitude (specify en route/crossing/safe)',
+        'signification' => 'Minimum altitude',
         'abbreviated'   => 'mnm alt',
       ],
     'AC' =>
@@ -1744,12 +1744,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'AP' =>
       [
-        'signification' => 'Reporting point (specify name or coded designator)',
+        'signification' => 'Reporting point',
         'abbreviated'   => 'rep',
       ],
     'AR' =>
       [
-        'signification' => 'ATS route (specify)',
+        'signification' => 'ATS route',
         'abbreviated'   => 'ats route',
       ],
     'AT' =>
@@ -1779,22 +1779,22 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'CA' =>
       [
-        'signification' => 'Air/ground facility (specify service and frequency)',
+        'signification' => 'Air/ground facility',
         'abbreviated'   => 'a/g fac',
       ],
     'CB' =>
       [
-        'signification' => 'Automatic dependent surveillance — broadcast (details)',
+        'signification' => 'Automatic dependent surveillance — broadcast',
         'abbreviated'   => 'ads-b',
       ],
     'CC' =>
       [
-        'signification' => 'Automatic dependent surveillance — contract (details)',
+        'signification' => 'Automatic dependent surveillance — contract',
         'abbreviated'   => 'ads-c',
       ],
     'CD' =>
       [
-        'signification' => 'Controller-pilot data link communications (details)',
+        'signification' => 'Controller-pilot data link communications',
         'abbreviated'   => 'cpdlc',
       ],
     'CE' =>
@@ -1819,13 +1819,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'CP' =>
       [
-        'signification' => 'Precision approach radar (PAR) (specify runway)',
+        'signification' => 'Precision approach radar (PAR)',
         'abbreviated'   => 'par',
       ],
     'CR' =>
       [
-        'signification' => 'Surveillance radar element of precision approach radar system
-(specify wavelength)',
+        'signification' => 'Surveillance radar element of precision approach radar system',
         'abbreviated'   => 'sre',
       ],
     'CS' =>
@@ -1845,7 +1844,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'FB' =>
       [
-        'signification' => 'Friction measuring device (specify type)',
+        'signification' => 'Friction measuring device',
         'abbreviated'   => 'Friction measuring device',
       ],
     'FC' =>
@@ -1855,12 +1854,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'FD' =>
       [
-        'signification' => 'Docking system (specify AGNIS, BOLDS, etc.)',
+        'signification' => 'Docking system',
         'abbreviated'   => 'dckg system',
       ],
     'FE' =>
       [
-        'signification' => 'Oxygen (specify type)',
+        'signification' => 'Oxygen',
         'abbreviated'   => 'oxygen',
       ],
     'FF' =>
@@ -1880,12 +1879,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'FI' =>
       [
-        'signification' => 'Aircraft de-icing (specify)',
+        'signification' => 'Aircraft de-icing',
         'abbreviated'   => 'acft de-ice',
       ],
     'FJ' =>
       [
-        'signification' => 'Oils (specify type)',
+        'signification' => 'Oils',
         'abbreviated'   => 'oil',
       ],
     'FL' =>
@@ -1895,7 +1894,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'FM' =>
       [
-        'signification' => 'Meteorological service (specify type)',
+        'signification' => 'Meteorological service',
         'abbreviated'   => 'met',
       ],
     'FO' =>
@@ -1915,7 +1914,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'FT' =>
       [
-        'signification' => 'Transmissometer (specify runway and, where applicable, designator(s) of transmissometer(s))',
+        'signification' => 'Transmissometer',
         'abbreviated'   => 'transmissometer',
       ],
     'FU' =>
@@ -1935,17 +1934,17 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'GA' =>
       [
-        'signification' => 'GNSS airfield-specific operations (specify operation)',
+        'signification' => 'GNSS airfield-specific operations',
         'abbreviated'   => 'gnss airfield',
       ],
     'GW' =>
       [
-        'signification' => 'GNSS area-wide operations (specify operation)',
+        'signification' => 'GNSS area-wide operations',
         'abbreviated'   => 'gnss area',
       ],
     'IC' =>
       [
-        'signification' => 'Instrument landing system (specify runway)',
+        'signification' => 'Instrument landing system',
         'abbreviated'   => 'ils',
       ],
     'ID' =>
@@ -1955,22 +1954,22 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'IG' =>
       [
-        'signification' => 'Glide path (ILS) (specify runway)',
+        'signification' => 'Glide path (ILS)',
         'abbreviated'   => 'ils gp',
       ],
     'II' =>
       [
-        'signification' => 'Inner marker (ILS) (specify runway)',
+        'signification' => 'Inner marker (ILS)',
         'abbreviated'   => 'ils im',
       ],
     'IL' =>
       [
-        'signification' => 'Localizer (ILS) (specify runway)',
+        'signification' => 'Localizer (ILS)',
         'abbreviated'   => 'ils loc',
       ],
     'IM' =>
       [
-        'signification' => 'Middle marker (ILS) (specify runway)',
+        'signification' => 'Middle marker (ILS)',
         'abbreviated'   => 'ils mm',
       ],
     'IN' =>
@@ -1980,42 +1979,42 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'IO' =>
       [
-        'signification' => 'Outer marker (ILS) (specify runway)',
+        'signification' => 'Outer marker (ILS)',
         'abbreviated'   => 'ils om',
       ],
     'IS' =>
       [
-        'signification' => 'ILS Category I (specify runway)',
+        'signification' => 'ILS Category I',
         'abbreviated'   => 'ils cat I',
       ],
     'IT' =>
       [
-        'signification' => 'ILS Category II (specify runway)',
+        'signification' => 'ILS Category II',
         'abbreviated'   => 'ils cat II',
       ],
     'IU' =>
       [
-        'signification' => 'ILS Category III (specify runway)',
+        'signification' => 'ILS Category III',
         'abbreviated'   => 'ils cat III',
       ],
     'IW' =>
       [
-        'signification' => 'Microwave landing system (MLS) (specify runway)',
+        'signification' => 'Microwave landing system (MLS)',
         'abbreviated'   => 'mls',
       ],
     'IX' =>
       [
-        'signification' => 'Locator, outer (ILS) (specify runway)',
+        'signification' => 'Locator, outer (ILS)',
         'abbreviated'   => 'ils lo',
       ],
     'IY' =>
       [
-        'signification' => 'Locator, middle (ILS) (specify runway)',
+        'signification' => 'Locator, middle (ILS)',
         'abbreviated'   => 'ils lm',
       ],
     'LA' =>
       [
-        'signification' => 'Approach lighting system (specify runway and type)',
+        'signification' => 'Approach lighting system',
         'abbreviated'   => 'als',
       ],
     'LB' =>
@@ -2025,7 +2024,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'LC' =>
       [
-        'signification' => 'Runway centre line lights (specify runway)',
+        'signification' => 'Runway centre line lights',
         'abbreviated'   => 'rcll',
       ],
     'LD' =>
@@ -2035,12 +2034,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'LE' =>
       [
-        'signification' => 'Runway edge lights (specify runway)',
+        'signification' => 'Runway edge lights',
         'abbreviated'   => 'redl',
       ],
     'LF' =>
       [
-        'signification' => 'Sequenced flashing lights (specify runway)',
+        'signification' => 'Sequenced flashing lights',
         'abbreviated'   => 'sequenced flg lgt',
       ],
     'LG' =>
@@ -2050,37 +2049,37 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'LH' =>
       [
-        'signification' => 'High intensity runway lights (specify runway)',
+        'signification' => 'High intensity runway lights',
         'abbreviated'   => 'high intst rwy lgt',
       ],
     'LI' =>
       [
-        'signification' => 'Runway end identifier lights (specify runway)',
+        'signification' => 'Runway end identifier lights',
         'abbreviated'   => 'rwy end id lgt',
       ],
     'LJ' =>
       [
-        'signification' => 'Runway alignment indicator lights (specify runway)',
+        'signification' => 'Runway alignment indicator lights',
         'abbreviated'   => 'rai lgt',
       ],
     'LK' =>
       [
-        'signification' => 'Category II components of approach lighting system (specify runway)',
+        'signification' => 'Category II components of approach lighting system',
         'abbreviated'   => 'category II components als',
       ],
     'LL' =>
       [
-        'signification' => 'Low intensity runway lights (specify runway)',
+        'signification' => 'Low intensity runway lights',
         'abbreviated'   => 'low intst rwy lgt',
       ],
     'LM' =>
       [
-        'signification' => 'Medium intensity runway lights (specify runway)',
+        'signification' => 'Medium intensity runway lights',
         'abbreviated'   => 'medium intst rwy lgt',
       ],
     'LP' =>
       [
-        'signification' => 'Precision approach path indicator (specify runway)',
+        'signification' => 'Precision approach path indicator',
         'abbreviated'   => 'papi',
       ],
     'LR' =>
@@ -2090,12 +2089,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'LS' =>
       [
-        'signification' => 'Stopway lights (specify runway)',
+        'signification' => 'Stopway lights',
         'abbreviated'   => 'stwl',
       ],
     'LT' =>
       [
-        'signification' => 'Threshold lights (specify runway)',
+        'signification' => 'Threshold lights',
         'abbreviated'   => 'thr lgt',
       ],
     'LU' =>
@@ -2105,7 +2104,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'LV' =>
       [
-        'signification' => 'Visual approach slope indicator system (specify type and runway)',
+        'signification' => 'Visual approach slope indicator system',
         'abbreviated'   => 'vasis',
       ],
     'LW' =>
@@ -2115,17 +2114,17 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'LX' =>
       [
-        'signification' => 'Taxiway centre line lights (specify taxiway)',
+        'signification' => 'Taxiway centre line lights',
         'abbreviated'   => 'twy cl lgt',
       ],
     'LY' =>
       [
-        'signification' => 'Taxiway edge lights (specify taxiway)',
+        'signification' => 'Taxiway edge lights',
         'abbreviated'   => 'twy edge lgt',
       ],
     'LZ' =>
       [
-        'signification' => 'Runway touchdown zone lights (specify runway)',
+        'signification' => 'Runway touchdown zone lights',
         'abbreviated'   => 'rtzl',
       ],
     'MA' =>
@@ -2135,17 +2134,17 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'MB' =>
       [
-        'signification' => 'Bearing strength (specify part of landing area or movement area)',
+        'signification' => 'Bearing strength',
         'abbreviated'   => 'bearing strength',
       ],
     'MC' =>
       [
-        'signification' => 'Clearway (specify runway)',
+        'signification' => 'Clearway',
         'abbreviated'   => 'cwy',
       ],
     'MD' =>
       [
-        'signification' => 'Declared distances (specify runway)',
+        'signification' => 'Declared distances',
         'abbreviated'   => 'declared dist',
       ],
     'MG' =>
@@ -2155,7 +2154,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'MH' =>
       [
-        'signification' => 'Runway arresting gear (specify runway)',
+        'signification' => 'Runway arresting gear',
         'abbreviated'   => 'rag',
       ],
     'MK' =>
@@ -2165,7 +2164,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'MM' =>
       [
-        'signification' => 'Daylight markings (specify threshold, centre line, etc.)',
+        'signification' => 'Daylight markings',
         'abbreviated'   => 'day markings',
       ],
     'MN' =>
@@ -2175,47 +2174,47 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'MO' =>
       [
-        'signification' => 'Stopbar (specify runway)',
+        'signification' => 'Stopbar',
         'abbreviated'   => 'rag',
       ],
     'MP' =>
       [
-        'signification' => 'Aircraft stands (specify)',
+        'signification' => 'Aircraft stands',
         'abbreviated'   => 'acft stand',
       ],
     'MR' =>
       [
-        'signification' => 'Runway (specify runway)',
+        'signification' => 'Runway',
         'abbreviated'   => 'rwy',
       ],
     'MS' =>
       [
-        'signification' => 'Stopway (specify runway)',
+        'signification' => 'Stopway',
         'abbreviated'   => 'swy',
       ],
     'MT' =>
       [
-        'signification' => 'Threshold (specify runway)',
+        'signification' => 'Threshold',
         'abbreviated'   => 'thr',
       ],
     'MU' =>
       [
-        'signification' => 'Runway turning bay (specify runway)',
+        'signification' => 'Runway turning bay',
         'abbreviated'   => 'rwy turning bay',
       ],
     'MW' =>
       [
-        'signification' => 'Strip/shoulder (specify runway)',
+        'signification' => 'Strip/shoulder',
         'abbreviated'   => 'Strip/shoulder',
       ],
     'MX' =>
       [
-        'signification' => 'Taxiway(s) (specify)',
+        'signification' => 'Taxiway(s)',
         'abbreviated'   => 'twy',
       ],
     'MY' =>
       [
-        'signification' => 'Rapid exit taxiway (specify)',
+        'signification' => 'Rapid exit taxiway',
         'abbreviated'   => 'Rapid exit twy',
       ],
     'NA' =>
@@ -2245,7 +2244,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'NL' =>
       [
-        'signification' => 'Locator (specify identification)',
+        'signification' => 'Locator',
         'abbreviated'   => 'l',
       ],
     'NM' =>
@@ -2280,7 +2279,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'OB' =>
       [
-        'signification' => 'Obstacle (specify details)',
+        'signification' => 'Obstacle',
         'abbreviated'   => 'obst',
       ],
     'OE' =>
@@ -2290,7 +2289,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'OL' =>
       [
-        'signification' => 'Obstacle lights on ... (specify)',
+        'signification' => 'Obstacle lights on ...',
         'abbreviated'   => 'obst lgt',
       ],
     'OR' =>
@@ -2300,7 +2299,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'PA' =>
       [
-        'signification' => 'Standard instrument arrival (specify route designator)',
+        'signification' => 'Standard instrument arrival',
         'abbreviated'   => 'star',
       ],
     'PB' =>
@@ -2315,7 +2314,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'PD' =>
       [
-        'signification' => 'Standard instrument departure (specify route designator)',
+        'signification' => 'Standard instrument departure',
         'abbreviated'   => 'sid',
       ],
     'PE' =>
@@ -2335,7 +2334,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'PI' =>
       [
-        'signification' => 'Instrument approach procedure (specify type and runway)',
+        'signification' => 'Instrument approach procedure',
         'abbreviated'   => 'instr apch proc',
       ],
     'PK' =>
@@ -2350,7 +2349,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'PM' =>
       [
-        'signification' => 'Aerodrome operating minima (specify procedure and amended minimum)',
+        'signification' => 'Aerodrome operating minima',
         'abbreviated'   => 'opr minima',
       ],
     'PN' =>
@@ -2360,7 +2359,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'PO' =>
       [
-        'signification' => 'Obstacle clearance altitude and height (specify procedure)',
+        'signification' => 'Obstacle clearance altitude and height',
         'abbreviated'   => 'oca och',
       ],
     'PR' =>
@@ -2370,17 +2369,17 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'PT' =>
       [
-        'signification' => 'Transition altitude or transition level (specify)',
+        'signification' => 'Transition altitude or transition level',
         'abbreviated'   => 'ta/trl',
       ],
     'PU' =>
       [
-        'signification' => 'Missed approach procedure (specify runway)',
+        'signification' => 'Missed approach procedure',
         'abbreviated'   => 'missed apch proc',
       ],
     'PX' =>
       [
-        'signification' => 'Minimum holding altitude (specify fix)',
+        'signification' => 'Minimum holding altitude',
         'abbreviated'   => 'mnm hldg alt',
       ],
     'PZ' =>
@@ -2390,12 +2389,12 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'RA' =>
       [
-        'signification' => 'Airspace reservation (specify)',
+        'signification' => 'Airspace reservation',
         'abbreviated'   => 'airspace reservation',
       ],
     'RD' =>
       [
-        'signification' => 'Danger area (specify)',
+        'signification' => 'Danger area',
         'abbreviated'   => '..d..',
       ],
     'RM' =>
@@ -2405,22 +2404,22 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'RO' =>
       [
-        'signification' => 'Overflying of ... (specify)',
+        'signification' => 'Overflying of ...',
         'abbreviated'   => 'overflying',
       ],
     'RP' =>
       [
-        'signification' => 'Prohibited area (specify)',
+        'signification' => 'Prohibited area',
         'abbreviated'   => '..p..',
       ],
     'RR' =>
       [
-        'signification' => 'Restricted area (specify)',
+        'signification' => 'Restricted area',
         'abbreviated'   => '..r..',
       ],
     'RT' =>
       [
-        'signification' => 'Temporary restricted area (specify area)',
+        'signification' => 'Temporary restricted area',
         'abbreviated'   => 'tempo restricted area',
       ],
     'SA' =>
@@ -2485,7 +2484,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'SY' =>
       [
-        'signification' => 'Upper advisory service (specify)',
+        'signification' => 'Upper advisory service',
         'abbreviated'   => 'upper advisory ser',
       ],
     'WA' =>
@@ -2510,7 +2509,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'WE' =>
       [
-        'signification' => 'Exercises (specify)',
+        'signification' => 'Exercises',
         'abbreviated'   => 'exer',
       ],
     'WF' =>
@@ -2550,7 +2549,7 @@ class NOTAM_LOOKUP_TABLE {
       ],
     'WR' =>
       [
-        'signification' => 'Radioactive materials or toxic chemicals (specify)',
+        'signification' => 'Radioactive materials or toxic chemicals',
         'abbreviated'   => 'pje',
       ],
     'WS' =>
@@ -2616,7 +2615,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'opr but gnd ck only, awaiting fltck',
     ],
     'AH' => [
-      'signification' => 'Hours of service are now…(specify)',
+      'signification' => 'Hours of service are now…',
       'abbreviated'   => 'hr ser',
     ],
     'AK' => [
@@ -2652,7 +2651,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'u/s',
     ],
     'AU' => [
-      'signification' => 'Not available (specify reason if appropriate)',
+      'signification' => 'Not available',
       'abbreviated'   => 'not avbl',
     ],
     'AW' => [
@@ -2732,7 +2731,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'ba is…',
     ],
     'HB' => [
-      'signification' => 'Friction coefficient is ... (specify friction measurement device used)',
+      'signification' => 'Friction coefficient is ...',
       'abbreviated'   => 'friction coefficient is',
     ],
     'HC' => [
@@ -2756,7 +2755,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'grass cutting inpr',
     ],
     'HH' => [
-      'signification' => 'Hazard due to (specify)',
+      'signification' => 'Hazard due to',
       'abbreviated'   => 'hazard due',
     ],
     'HI' => [
@@ -2764,7 +2763,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'cov ice',
     ],
     'HJ' => [
-      'signification' => 'Launch planned ... (specify balloon flight identification or project code name, launch site, planned period of launch(es)-date/ time, expected climb direction, estimate time to pass 18 000 m (60 000 ft), or reaching cruise level if at or below 18 000 m (60 000 ft), together with estimated location)',
+      'signification' => 'Launch planned ...',
       'abbreviated'   => 'launch plan',
     ],
     'HK' => [
@@ -2792,7 +2791,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'sn clr inpr',
     ],
     'HQ' => [
-      'signification' => 'Operation canceled ... (specify balloon flight identification or project code name)',
+      'signification' => 'Operation canceled ...',
       'abbreviated'   => 'opr cnl',
     ],
     'HR' => [
@@ -2808,7 +2807,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'apch according signal',
     ],
     'HU' => [
-      'signification' => 'Launch in progress ... (specify balloon flight identification or project code name, launch site, date/time of launch(es), estimated time passing 18 000 m (60 000 ft), or reaching cruising level if at or below 18 000 m (60 000 ft), together with estimated location, estimated date/time of termination of the flight, and planned location of ground contact when applicable)',
+      'signification' => 'Launch in progress ...',
       'abbreviated'   => 'launch inpr',
     ],
     'HV' => [
@@ -2824,7 +2823,7 @@ class NOTAM_LOOKUP_TABLE {
       'abbreviated'   => 'bird concentration',
     ],
     'HY' => [
-      'signification' => 'Snow banks exist (specify height)',
+      'signification' => 'Snow banks exist',
       'abbreviated'   => 'sn banks hgt',
     ],
     'HZ' => [
