@@ -15,7 +15,9 @@
   },
   "autoload": {
     "classmap": [
-      "src/notam.php"
+      "src/notam.php",
+      "src/notam_lookup_table.php",
+      "src/notam_abbreviations.php"
     ]
   }
 }
