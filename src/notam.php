@@ -925,19 +925,6 @@ class NotamFunctions {
     $tokens = [$token];
     return NotamFunctions::tokens_descriptions($tokens, $notam_string)[0];
   }
-
-  /**
-   * @param  string  $notam_str
-   *
-   * @return \LFour\notam\TOKEN[]
-   */
-  public static function explain_notam_body(string $notam_str): array {
-    $words = explode(" ", $notam_str);
-    $tokens = [];
-    foreach ($words as $word) {
-
-    }
-  }
 }
 
 
