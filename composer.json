@@ -2,7 +2,6 @@
   "name": "l-four/notam",
   "description": "Parse ICAO formatted NOTAM messages.",
   "minimum-stability": "stable",
-  "version": "1.0.0",
   "type": "library",
   "license": "GPL-3.0-only",
   "authors": [
@@ -19,6 +18,7 @@
       "src/notam_lookup_table.php",
       "src/notam_abbreviations.php"
     ]
-  }
+  },
+  "readme": "Readme.md"
 }
 
